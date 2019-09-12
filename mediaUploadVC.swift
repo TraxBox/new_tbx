@@ -1,5 +1,4 @@
-//
-//  mediaUploadVC.swift
+ mediaUploadVC.swift
 //  new_tbx
 //
 //  Created by SEVENHORNS ADMIN on 8/6/19.
@@ -56,21 +55,15 @@ class mediaUploadVC: UITableViewController, UINavigationControllerDelegate, MPMe
 //         avMusicPlayer.play()
 
     }
-    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
-        // Store the completion handler.
-        AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
-    }
     
-    
-    
-//    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
-//
-//        avMusicPlayer.setQueue(with: mediaItemCollection)
-//        mediaPicker.dismiss(animated: true, completion: nil)
-//
-//        avMusicPlayer.play()
-//        //        print("you picked: \(MPMediaItemCollection())")
-    
+    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+        
+        avMusicPlayer.setQueue(with: mediaItemCollection)
+        mediaPicker.dismiss(animated: true, completion: nil)
+        
+        avMusicPlayer.play()
+        //        print("you picked: \(MPMediaItemCollection())")
+        
     }
     
     //    func uploadData() {
@@ -80,82 +73,59 @@ class mediaUploadVC: UITableViewController, UINavigationControllerDelegate, MPMe
     
     
     
-func uploadData(_ data: UIButton) {
-         let data: Data = Data()// The data to upload
+    @IBAction func uploadData(_ data: UIButton) {
+        //        let data: Data = Data() // Data to be uploaded
+        let fileURL: URL = URL(fileURLWithPath: "")
+        
+        if let data = try? Data(contentsOf: fileURL){
+//        if (try? Data(contentsOf: fileURL)) != nil {
+            // now you have the data
+        }
         
         let expression = AWSS3TransferUtilityUploadExpression()
-        expression.progressBlock = {(task, progress) in DispatchQueue.main.async(execute: {
-            // Do something e.g. Update a progress bar.
-        })
+        expression.progressBlock = {(task, progress) in
+            DispatchQueue.main.async(execute: {
+                
+                print("upload in progress")
+                // Do something e.g. Update a progress bar.
+            })
         }
-    var completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock?
-    completionHandler = { (task, error) -> Void in
-        DispatchQueue.main.async(execute: {
-            if let _ = error {
-                print ("There was an error uploading files... \(error.debugDescription)")
-                print ("Let us check response \(String(describing: task.response?.allHeaderFields))")
-                print ("Let us check response \(String(describing: task.response?.debugDescription))")
-            } else {
-                print("Completed uploading file...")
-            }
-
-//        let completionHandler = { (task, error) -> Void in
-//            DispatchQueue.main.async(execute: {
-//                // Do something e.g. Alert a user for transfer completion.
-//                // On failed uploads, `error` contains the error object.
+        
+        var completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock?
+        completionHandler = { (task, error) -> Void in
+            DispatchQueue.main.async(execute: {
+                if let _ = error {
+                    print ("There was an error uploading files... \(error.debugDescription)")
+                    print ("Let us check response \(String(describing: task.response?.allHeaderFields))")
+                    print ("Let us check response \(String(describing: task.response?.debugDescription))")
+                } else {
+                    print("Completed uploading file...")
+                }
             })
         }
         userAPI.getuserId { (userCognitoId) in
-        let  transferUtility = AWSS3TransferUtility.default()
-        
-        transferUtility.uploadData(data,
-                                   bucket: "newtbxbkt-newtbxeniv",
-                                   key: "protected/\(userCognitoId)/song1.mp3",
-                                   contentType: "audio/mp3",
-                                   expression: nil,
-                                   completionHandler: completionHandler).continueWith { (task) -> AnyObject? in
-                                    if let error = task.error {
-                                        print("Error: \(error.localizedDescription)")
-                                    }
-                                    
-                                    if let _ = task.result {
-                                        // Do something with uploadTask.
-                                    }
-                                    
-                                    return nil;
-        }
-//        var completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock?
-//        completionHandler = { (task, error) -> Void in
-//            DispatchQueue.main.async(execute: {
-//                if let _ = error {
-//                    print ("There was an error uploading files... \(error.debugDescription)")
-//                    print ("Let us check response \(String(describing: task.response?.allHeaderFields))")
-//                    print ("Let us check response \(String(describing: task.response?.debugDescription))")
-//                } else {
-//                    print("Completed uploading file...")
-//                }
-//            })
-//        }
-//        userAPI.getuserId { (userCognitoId) in
-//            let transferUtility = AWSS3TransferUtility.default()
-//
-//            transferUtility.uploadData(data as! Data,
-//                                       bucket: "newtbxbkt-newtbxeniv",
-//                                       key: "protected/\(userCognitoId)/song1.mp3",
-//                contentType: "audio/mp3",
-//                expression: nil,
-//                completionHandler: completionHandler).continueWith {
-//                    (task) -> AnyObject? in
-//                    if let error = task.error {
-//                        print("Error: \(error.localizedDescription)")
-//                    }
-//
-//                    if let _ = task.result {
-//                        // Do something with uploadTask.
-//                    }
-//                    return nil;
-//            }
+            let transferUtility = AWSS3TransferUtility.default()
+            
+            transferUtility.uploadData(data as! Data,
+                                       bucket: self.BUCKETNAME,
+                                       key: "protected/\(userCognitoId)/song1.mp3",
+                contentType: "audio/mp3",
+                expression: expression,
+                completionHandler: completionHandler).continueWith {
+                    (task) -> AnyObject? in
+                    if let error = task.error {
+                        print("Error: \(error.localizedDescription)")
+                    }
+                    
+                    if let _ = task.result {
+                        // Do something with uploadTask.
+                    }
+                    return nil;
+            }
         }
     }
+    
+}
+
     
 

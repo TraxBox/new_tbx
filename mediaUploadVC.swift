@@ -65,14 +65,8 @@ class mediaUploadVC: UITableViewController, UINavigationControllerDelegate, MPMe
         //        print("you picked: \(MPMediaItemCollection())")
         
     }
-    
-    //    func uploadData() {
-    //
-    //
-    //}
-    
-    
-    
+
+        
     @IBAction func uploadData(_ data: UIButton) {
         //        let data: Data = Data() // Data to be uploaded
         let fileURL: URL = URL(fileURLWithPath: "")

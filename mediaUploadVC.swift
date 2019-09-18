@@ -98,8 +98,9 @@
     }
     
     @IBAction func uploadData(_ sender: UIButton) {
-        
-        if let current = avMusicPlayer.nowPlayingItem {
+        /** see other properties of an MPMediaItem here: https://developer.apple.com/documentation/mediaplayer/mpmediaitem
+        **/
+        if let current = avMusicPlayer.nowPlayingItem, let title = current.title {
             self.export(current) { url in
                 if let exportedURL = url, let data = try? Data(contentsOf: exportedURL) {
                     let expression = AWSS3TransferUtilityUploadExpression()
@@ -128,7 +129,7 @@
                         
                         transferUtility.uploadData(data as! Data,
                                                    bucket: self.BUCKETNAME,
-                                                   key: "protected/\(userCognitoId)/song1.mp3",
+                                                   key: "protected/\(userCognitoId)/\(title).mp3",
                             contentType: "audio/mp3",
                             expression: expression,
                             completionHandler: completionHandler).continueWith {

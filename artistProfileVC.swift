@@ -39,24 +39,10 @@ class artistProfileVC: UITableViewController,  UINavigationControllerDelegate, U
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        self.view.backgroundColor = UIColor(red: 100/255, green: 100/255, blue: 100/255, alpha: 1)
-        
-//        tableView.delegate = self
-//        tableView.dataSource = self
-//        
-//        let headerView = UIView()
-//        headerView.backgroundColor = UIColor.blue
-//        headerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
-        
+
         
         _ = userCognitoId
       
-//        firstName.delegate = (self as! UITextFieldDelegate);
-//        lastName.delegate = self
-//        stageName.delegate = self
-//        genre.delegate = self
-//        hometown.delegate = self
-//        bio.delegate = self
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         appSyncClient = appDelegate.appSyncClient
@@ -96,7 +82,7 @@ class artistProfileVC: UITableViewController,  UINavigationControllerDelegate, U
         }
     }
     
-    // Retrieve your Amazon Cognito ID
+ 
   
     
     

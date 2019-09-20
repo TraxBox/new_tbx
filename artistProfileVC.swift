@@ -27,7 +27,6 @@ class artistProfileVC: UITableViewController,  UINavigationControllerDelegate, U
     @IBOutlet weak var bio: UITextField!
     
     var imagePicker = UIImagePickerController()
-    var userCognitoId = userAPI.getuserId
     var appSyncClient: AWSAppSyncClient?
 //    var picker = UIImagePickerController()
     
@@ -87,18 +86,20 @@ class artistProfileVC: UITableViewController,  UINavigationControllerDelegate, U
     
     
     func runMutation(){
-        
-        let mutationInput = UpdateArtistProfileInput(id:"\(userCognitoId)", firstName: "\(firstName.text!)", lastName: "\(lastName.text!)", stageName: "\(stageName.text!)", bio:"\(bio.text!)", genre: "\(genre.text!)", hometown:"\(hometown.text!)")
-        appSyncClient?.perform(mutation: UpdateArtistProfileMutation(input: mutationInput)) { (result, error) in
-            if let error = error as? AWSAppSyncClientError {
-                print("Error occurred: \(error.localizedDescription )")
+        userAPI.getuserId { id in
+            let mutationInput = UpdateArtistProfileInput(id: id, firstName: self.firstName.text!, lastName: self.lastName.text!, stageName: self.stageName.text!, bio: self.bio.text!, genre: self.genre.text!, hometown: self.hometown.text!)
+            self.appSyncClient?.perform(mutation: UpdateArtistProfileMutation(input: mutationInput)) { (result, error) in
+                if let error = error as? AWSAppSyncClientError {
+                    print("Error occurred: \(error.localizedDescription )")
+                }
+                if let resultError = result?.errors {
+                    print("Error saving the item on server: \(resultError)")
+                    return
+                }
+                print(result.debugDescription)
             }
-            if let resultError = result?.errors {
-                print("Error saving the item on server: \(resultError)")
-                return
-            }
-            print(result.debugDescription)
         }
+        
 
     
     
